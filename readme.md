@@ -2,4 +2,4 @@
 
 For faster performance on a GPU.
 
-![](https://github.com/sdanaipat/Theano-ZCA/blob/master/zca.png)
+![](https://github.com/sdanaipat/Theano-ZCA/blob/master/example.png)
