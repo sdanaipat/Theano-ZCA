@@ -20,7 +20,7 @@ class ZCA(object):
         self.compute_zca = theano.function([X_in, u, s, eps], X_zca)
 
 
-    def fit_trainsform(self, X, eps):
+    def fit_transform(self, X, eps):
         cov = self.sigma(X)
         u, s, _ = svd(cov)
         u = u.astype(np.float32)
