@@ -29,6 +29,7 @@ class ZCA(object):
         self._u = u.astype(np.float32)
         self._s = s.astype(np.float32)
         del cov
+        return self
 
     def transform(self, X, eps):
         return self.compute_zca(X, self._u, self._s, eps)
