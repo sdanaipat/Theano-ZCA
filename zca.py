@@ -7,24 +7,27 @@ import numpy as np
 class ZCA(object):
     def __init__(self):
         X_in = T.matrix('X_in')
+        X_mean = T.vector('X_mean')
         u = T.matrix('u')
         s = T.vector('s')
         eps = T.scalar('eps')
 
-        X_ = X_in - T.mean(X_in, 0)
+        X_ = X_in - X_mean
         sigma = T.dot(X_.T, X_) / X_.shape[0]
-        self.sigma = theano.function([X_in], sigma)
+        self.sigma = theano.function([X_in, X_mean], sigma)
 
         Z = T.dot(T.dot(u, T.nlinalg.diag(1. / T.sqrt(s + eps))), u.T)
         X_zca = T.dot(X_, Z.T)
-        self.compute_zca = theano.function([X_in, u, s, eps], X_zca)
+        self.compute_zca = theano.function([X_in, X_mean, u, s, eps], X_zca)
 
         self._u = None
         self._s = None
+        self._X_mean = 0.
 
 
     def fit(self, X):
-        cov = self.sigma(X)
+        self._X_mean = X.mean(0).astype(np.float32)
+        cov = self.sigma(X, self._X_mean)
         u, s, _ = svd(cov)
         self._u = u.astype(np.float32)
         self._s = s.astype(np.float32)
@@ -32,7 +35,7 @@ class ZCA(object):
         return self
 
     def transform(self, X, eps):
-        return self.compute_zca(X, self._u, self._s, eps)
+        return self.compute_zca(X, self._X_mean, self._u, self._s, eps)
 
 
     def fit_transform(self, X, eps):
